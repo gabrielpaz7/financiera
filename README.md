@@ -1,5 +1,5 @@
 # La Financiera
-###Ingeniería de Software 4K3 - Grupo 16
+### Ingeniería de Software 4K3 - Grupo 16
 
 
 Drive => https://drive.google.com/drive/folders/1MVaY8Ndf8ZKGnb3gdvjBQTvKx81rBlx9
