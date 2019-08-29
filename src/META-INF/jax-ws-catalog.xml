@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?wsdl" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.wsdl"/>
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?wsdl=wsdl0" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.wsdl_wsdl0.wsdl"/>
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?xsd=xsd0" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.xsd_xsd0.xsd"/>
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?xsd=xsd3" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.xsd_xsd3.xsd"/>
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?xsd=xsd1" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.xsd_xsd1.xsd"/>
+    <system systemId="http://ds.dyndns.org:9000/ServicioPublicoCredito?xsd=xsd2" uri="wsdl/ds.dyndns.org_9000/ServicioPublicoCredito.xsd_xsd2.xsd"/>
+</catalog>

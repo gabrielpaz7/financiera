@@ -10,7 +10,11 @@ import financiera.common.Model;
 import financiera.common.Presenter;
 import financiera.common.View;
 import financiera.persistencia.Repositorio;
+import financiera.webservice.Webservice;
+import static financiera.webservice.Webservice.obtenerEstadoCliente;
 import javax.swing.JOptionPane;
+import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
+import org.tempuri.IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage;
 
 /**
  *
@@ -55,15 +59,22 @@ public class SolicitarCreditoPresenter implements Presenter {
         // todo
     }
     
-    public Cliente buscarCliente(int dni) {
+    public Cliente buscarCliente(int dni) throws IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage {
         for(Cliente c : Repositorio.getClientes()) {
             System.out.println(c);
             if(c.getDni() == dni) {
+                ResultadoEstadoCliente estadoCliente =  Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), dni);
+            
+                if(!estadoCliente.isConsultaValida()) {
+                    view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "El servicio externo no pudo validar la situacion financiera del cliente.");
+                }
+            
+                view.actualizarDatosCliente(c, estadoCliente.getCantidadCreditosActivos());
                 return c;
-            }
+            } 
         }
         
-        view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Usuario no encontrado");
+        view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Cliente no encontrado");
         return null;
     }
     

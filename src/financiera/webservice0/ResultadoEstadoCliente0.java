@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package financiera.webservice;
+package financiera.webservice0;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,13 +14,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gabriel
  */
 @XmlRootElement(name = "ObtenerEstadoClienteResult")
-public class ResultadoEstadoCliente {
+public class ResultadoEstadoCliente0 {
     boolean tieneDeudas;
     int cantidadCreditosActivos;
     boolean consultaVacia;
     String error;
 
-    public ResultadoEstadoCliente(boolean tieneDeudas, int cantidadCreditosActivos, boolean consultaVacia, String error) {
+    public ResultadoEstadoCliente0(boolean tieneDeudas, int cantidadCreditosActivos, boolean consultaVacia, String error) {
         this.tieneDeudas = tieneDeudas;
         this.cantidadCreditosActivos = cantidadCreditosActivos;
         this.consultaVacia = consultaVacia;

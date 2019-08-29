@@ -7,18 +7,22 @@ package financiera.terminal;
 
 import financiera.persistencia.Repositorio;
 import financiera.persistencia.Session;
-import financiera.webservice.Webservice;
+import financiera.webservice0.Webservice0;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
+import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;
+import org.tempuri.IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage;
+import financiera.webservice.Webservice;
 
 /**
  *
  * @author Gabriel
  */
 public class Terminal {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage {
         
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -36,7 +40,10 @@ public class Terminal {
         Repositorio.iniciar();
         Session.iniciar();
         
-        Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), 33000000);
+        Webservice0.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), 33000000);
+        ResultadoEstadoCliente resultado = Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), 33000000);
+        System.out.println(resultado.getCantidadCreditosActivos());
+        
         //Webservice.informarCreditoOtorgado(Repositorio.getFinanciera().getIdentificador(), 33000999, "123456", 25000);
         //Webservice.informarCreditoFinalizado(Repositorio.getFinanciera().getIdentificador(), 33000999, "123456");
     }

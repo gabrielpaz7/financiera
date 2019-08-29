@@ -49,7 +49,7 @@ public class Repositorio {
         Cliente cliente = new Cliente(33050255, "Cesar Gabriel Paz", "Rivadavia 1050", "3815982851", 50000);
         clientes.add(cliente);
         
-        cliente = new Cliente(123456, "Cliente Test", "Rivadavia 1050", "3815982851", 50000);
+        cliente = new Cliente(33000000, "Cliente Test", "Rivadavia 1050", "3815982851", 50000);
         clientes.add(cliente);
     }
 
