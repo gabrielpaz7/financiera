@@ -7,6 +7,8 @@ package financiera.persistencia;
 
 import financiera.Financiera;
 import financiera.cliente.Cliente;
+import financiera.credito.PlanCuota;
+import financiera.credito.PlanCuotaModalidad;
 import financiera.usuario.Usuario;
 import java.util.ArrayList;
 
@@ -18,11 +20,13 @@ public class Repositorio {
     private static Financiera financiera;
     private static ArrayList<Usuario> usuarios;
     private static ArrayList<Cliente> clientes;
+    private static ArrayList<PlanCuota> planes;
     
     public static void iniciar() {
         iniciarFinanciera();
         iniciarUsuarios();
         iniciarClientes();
+        iniciarPlanes();
     }
     
     public static void iniciarFinanciera() {
@@ -52,6 +56,16 @@ public class Repositorio {
         cliente = new Cliente(33000000, "Cliente Test", "Rivadavia 1050", "3815982851", 50000);
         clientes.add(cliente);
     }
+    
+    private static void iniciarPlanes() {
+        planes = new ArrayList<PlanCuota>();
+        
+        PlanCuota plan = new PlanCuota("Plan CUOTA ADELANTADA", PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA, 5, 0);
+        planes.add(plan);
+        
+        plan = new PlanCuota("Plan CUOTA VENCIDA", PlanCuotaModalidad.PRIMERA_CUOTA_VENCIDA, 5, 2);
+        planes.add(plan);
+    }
 
     public static Financiera getFinanciera() {
         return financiera;
@@ -64,5 +78,8 @@ public class Repositorio {
     public static ArrayList<Cliente> getClientes() {
         return clientes;
     }
-    
+
+    public static ArrayList<PlanCuota> getPlanes() {
+        return planes;
+    }  
 }

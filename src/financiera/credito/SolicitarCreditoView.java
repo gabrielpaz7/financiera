@@ -11,6 +11,11 @@ import financiera.common.View;
 import financiera.terminal.TerminalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /**
@@ -59,11 +64,26 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
             @Override
             public void actionPerformed(ActionEvent e) {
                 int dni = Integer.valueOf(fdDni.getText());
-                Cliente cliente = presenter.buscarCliente(dni);
+                presenter.buscarCliente(dni);
+            }
+        });
+        
+        cbPlanCuotas.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                PlanCuota item = (PlanCuota) e.getItem();
                 
-                if(cliente != null) {
-                    actualizarDatosCliente(cliente, 0);
-                }
+                item.toString();
+                actualizarDatosPlan(item);
+                presenter.getModel().setPlan(item);
+            }
+        });
+        
+        btnCalcularDetalles.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarDetallesCredito(presenter.getModel());
             }
         });
     }
@@ -79,6 +99,42 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     
     public void mostrarMensajeError(int tipo, String titulo, String mensaje) {
         JOptionPane.showMessageDialog(parentFrame, mensaje, titulo, tipo);
+    }
+    
+    public void cargarPlanes(ArrayList<PlanCuota> planes) {
+        DefaultComboBoxModel planesModel = new DefaultComboBoxModel();
+        
+        for(PlanCuota plan : planes) {
+            planesModel.addElement(plan);
+        }
+        
+        cbPlanCuotas.setModel(planesModel);
+        actualizarDatosPlan(planes.get(0));
+    }
+    
+    public void actualizarDatosPlan(PlanCuota plan) {
+        fdPorcentajeMensual.setText(String.valueOf(plan.getPorcentajeMensual()));
+        fdPorcentajeGastos.setText(String.valueOf(plan.getProcentajeGastos()));
+        fdCuotas.setValue(2);
+        
+        if(plan.getModalidad() == PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA){
+            radioCuotaAdelantada.setSelected(true);
+        } else {
+            radioCuotaVencida.setSelected(true);
+        }
+    }
+    
+    public void actualizarDetallesCredito(Credito credito) {
+        double capital = Double.valueOf(fdCapital.getText());
+        int numeroCuotas = (int) fdCuotas.getValue();
+        
+        presenter.getModel().setCapital(capital);
+        presenter.getModel().setNumeroCuotas(numeroCuotas);
+        
+        txtMontoTotal.setText(String.valueOf(credito.calcularMontoTotal()));
+        txtImporteCuota.setText(String.valueOf(credito.calcularImporteCuota()));
+        txtGastos.setText(String.valueOf(credito.calcularGastos()));
+        txtTotalEntregado.setText(String.valueOf(credito.getCapital() - credito.calcularGastos()));
     }
     
     
@@ -116,7 +172,6 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         jLabel15 = new javax.swing.JLabel();
         cbPlanCuotas = new javax.swing.JComboBox<>();
         jLabel16 = new javax.swing.JLabel();
-        radioCuotaVencida = new javax.swing.JRadioButton();
         radioCuotaAdelantada = new javax.swing.JRadioButton();
         jLabel17 = new javax.swing.JLabel();
         fdPorcentajeMensual = new javax.swing.JTextField();
@@ -124,20 +179,22 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         fdPorcentajeGastos = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
         fdCapital = new javax.swing.JTextField();
-        jSeparator2 = new javax.swing.JSeparator();
         jLabel20 = new javax.swing.JLabel();
         fdCuotas = new javax.swing.JSpinner();
-        jLabel21 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        txtMontoTotal = new javax.swing.JLabel();
-        txtImporteCuota = new javax.swing.JLabel();
-        txtGastos = new javax.swing.JLabel();
-        txtImporteTotal = new javax.swing.JLabel();
+        radioCuotaVencida = new javax.swing.JRadioButton();
+        btnCalcularDetalles = new javax.swing.JButton();
         btnAceptar = new javax.swing.JButton();
         btnCanelar = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        txtMontoTotal = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        txtImporteCuota = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        txtGastos = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        txtTotalEntregado = new javax.swing.JLabel();
+        btnImprimirComprobante = new javax.swing.JButton();
 
         setTitle("Financiera");
 
@@ -174,26 +231,32 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         jLabel3.setText("Cliente:");
 
+        txtCliente.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtCliente.setText("______________________");
 
         jLabel5.setText("DNI:");
 
+        txtDni.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtDni.setText("_______________________________");
 
         jLabel7.setText("Domicilio:");
 
+        txtDomicilio.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtDomicilio.setText("______________________");
 
         jLabel9.setText("Teléfono:");
 
+        txtTelefono.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtTelefono.setText("___________________________");
 
         jLabel11.setText("Sueldo:");
 
-        txtSueldo.setText("_______________________");
+        txtSueldo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtSueldo.setText("______________________");
 
         jLabel13.setText("Créditos activos:");
 
+        txtCreditosActivos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtCreditosActivos.setText("_____________________");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -213,20 +276,19 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnBuscarCliente))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel11)
                                         .addGap(18, 18, 18)
-                                        .addComponent(txtSueldo, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                            .addComponent(jLabel7)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(txtDomicilio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                            .addComponent(jLabel3)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(txtCliente))))
+                                        .addComponent(txtSueldo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtDomicilio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCliente)))
                                 .addGap(38, 38, 38)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -283,8 +345,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         jLabel16.setText("Modalidad");
 
-        radioCuotaVencida.setText("1º Cuota Vencida");
-
+        radioGroupModalidad.add(radioCuotaAdelantada);
         radioCuotaAdelantada.setText("1º Cuota Adelantada");
 
         jLabel17.setText("Porcentaje Mensual   %");
@@ -299,28 +360,13 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         jLabel19.setText("Capital                         $");
 
-        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
         jLabel20.setText("Cuotas");
 
-        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel21.setText("Detalle de Crédito");
+        radioGroupModalidad.add(radioCuotaVencida);
+        radioCuotaVencida.setText("1º Cuota Vencida");
 
-        jLabel22.setText("Monto total");
-
-        jLabel23.setText("Importe cuota");
-
-        jLabel24.setText("Gastos");
-
-        jLabel25.setText("Importe entregado");
-
-        txtMontoTotal.setText("$___________");
-
-        txtImporteCuota.setText("$___________");
-
-        txtGastos.setText("$___________");
-
-        txtImporteTotal.setText("$___________");
+        btnCalcularDetalles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/calculator_edit_16.png"))); // NOI18N
+        btnCalcularDetalles.setText("Calcular");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -334,97 +380,64 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                             .addComponent(jLabel16)
                             .addComponent(jLabel15))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbPlanCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(radioCuotaVencida)
+                                .addComponent(radioCuotaAdelantada)
                                 .addGap(18, 18, 18)
-                                .addComponent(radioCuotaAdelantada))
-                            .addComponent(cbPlanCuotas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel17)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(fdPorcentajeMensual))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel18)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(fdPorcentajeGastos))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel19)
-                                .addComponent(jLabel20))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(fdCapital)
-                                .addComponent(fdCuotas, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)))))
-                .addGap(33, 33, 33)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel21)
+                                .addComponent(radioCuotaVencida)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel22)
-                            .addComponent(jLabel23)
-                            .addComponent(jLabel24)
-                            .addComponent(jLabel25))
-                        .addGap(32, 32, 32)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtImporteTotal)
-                            .addComponent(txtGastos)
-                            .addComponent(txtImporteCuota)
-                            .addComponent(txtMontoTotal))))
-                .addContainerGap(88, Short.MAX_VALUE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel17)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fdPorcentajeMensual))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fdPorcentajeGastos))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel19)
+                                    .addComponent(jLabel20))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(fdCapital)
+                                    .addComponent(fdCuotas, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCalcularDetalles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel21)
-                        .addGap(28, 28, 28)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel22)
-                            .addComponent(txtMontoTotal))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel23)
-                            .addComponent(txtImporteCuota))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel24)
-                            .addComponent(txtGastos))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel25)
-                            .addComponent(txtImporteTotal)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15)
-                            .addComponent(cbPlanCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel16)
-                            .addComponent(radioCuotaVencida)
-                            .addComponent(radioCuotaAdelantada))
-                        .addGap(21, 21, 21)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel17)
-                            .addComponent(fdPorcentajeMensual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(fdPorcentajeGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel19)
-                            .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel20)
-                            .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(cbPlanCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(radioCuotaAdelantada)
+                    .addComponent(radioCuotaVencida))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(fdPorcentajeMensual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(fdPorcentajeGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCalcularDetalles))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -439,6 +452,68 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
             }
         });
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Detalle Crédito"));
+
+        jLabel22.setText("Monto total");
+
+        txtMontoTotal.setText("$___________");
+
+        jLabel23.setText("Importe cuota");
+
+        txtImporteCuota.setText("$___________");
+
+        jLabel24.setText("Gastos");
+
+        txtGastos.setText("$___________");
+
+        jLabel25.setText("Importe entregado");
+
+        txtTotalEntregado.setText("$___________");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel22)
+                    .addComponent(jLabel23)
+                    .addComponent(jLabel24)
+                    .addComponent(jLabel25))
+                .addGap(32, 32, 32)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtTotalEntregado)
+                    .addComponent(txtGastos)
+                    .addComponent(txtImporteCuota)
+                    .addComponent(txtMontoTotal))
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(txtMontoTotal))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(txtImporteCuota))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(txtGastos))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25)
+                    .addComponent(txtTotalEntregado))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnImprimirComprobante.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/printer_16.png"))); // NOI18N
+        btnImprimirComprobante.setText("Imprimir Comprobante");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -448,9 +523,13 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnImprimirComprobante)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCanelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAceptar)))
@@ -463,12 +542,15 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnImprimirComprobante)
                     .addComponent(btnAceptar)
                     .addComponent(btnCanelar))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -486,7 +568,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptar;
     private javax.swing.JButton btnBuscarCliente;
+    private javax.swing.JButton btnCalcularDetalles;
     private javax.swing.JButton btnCanelar;
+    private javax.swing.JButton btnImprimirComprobante;
     private javax.swing.JComboBox<String> cbPlanCuotas;
     private javax.swing.JTextField fdCapital;
     private javax.swing.JSpinner fdCuotas;
@@ -503,7 +587,6 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
@@ -515,8 +598,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JRadioButton radioCuotaAdelantada;
     private javax.swing.JRadioButton radioCuotaVencida;
     private javax.swing.ButtonGroup radioGroupModalidad;
@@ -526,9 +609,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JLabel txtDomicilio;
     private javax.swing.JLabel txtGastos;
     private javax.swing.JLabel txtImporteCuota;
-    private javax.swing.JLabel txtImporteTotal;
     private javax.swing.JLabel txtMontoTotal;
     private javax.swing.JLabel txtSueldo;
     private javax.swing.JLabel txtTelefono;
+    private javax.swing.JLabel txtTotalEntregado;
     // End of variables declaration//GEN-END:variables
 }

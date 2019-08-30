@@ -9,16 +9,16 @@ package financiera.credito;
  *
  * @author Gabriel
  */
-public class PlanCuotas {
+public class PlanCuota {
     String descripcion;
-    String modalidad; // primera cuota vencida - primera cuota adelantada
+    PlanCuotaModalidad modalidad; // primera cuota vencida - primera cuota adelantada
     double porcentajeMensual;
     double procentajeGastos;
 
-    public PlanCuotas() {
+    public PlanCuota() {
     }
 
-    public PlanCuotas(String descripcion, String modalidad, double porcentajeMensual, double procentajeGastos) {
+    public PlanCuota(String descripcion, PlanCuotaModalidad modalidad, double porcentajeMensual, double procentajeGastos) {
         this.descripcion = descripcion;
         this.modalidad = modalidad;
         this.porcentajeMensual = porcentajeMensual;
@@ -31,14 +31,6 @@ public class PlanCuotas {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public String getModalidad() {
-        return modalidad;
-    }
-
-    public void setModalidad(String modalidad) {
-        this.modalidad = modalidad;
     }
 
     public double getPorcentajeMensual() {
@@ -55,6 +47,19 @@ public class PlanCuotas {
 
     public void setProcentajeGastos(double procentajeGastos) {
         this.procentajeGastos = procentajeGastos;
+    }
+
+    public PlanCuotaModalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(PlanCuotaModalidad modalidad) {
+        this.modalidad = modalidad;
+    }
+    
+    @Override
+    public String toString() {
+        return this.descripcion;
     }
     
     

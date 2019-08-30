@@ -39,12 +39,5 @@ public class Terminal {
         new Thread (new SplashView()).start();
         Repositorio.iniciar();
         Session.iniciar();
-        
-        Webservice0.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), 33000000);
-        ResultadoEstadoCliente resultado = Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), 33000000);
-        System.out.println(resultado.getCantidadCreditosActivos());
-        
-        //Webservice.informarCreditoOtorgado(Repositorio.getFinanciera().getIdentificador(), 33000999, "123456", 25000);
-        //Webservice.informarCreditoFinalizado(Repositorio.getFinanciera().getIdentificador(), 33000999, "123456");
     }
 }

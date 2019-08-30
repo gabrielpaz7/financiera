@@ -27,6 +27,7 @@ public class SolicitarCreditoPresenter implements Presenter {
     public SolicitarCreditoPresenter(SolicitarCreditoView view, Credito model) {
         this.view = view;
         this.model = model;
+        cargarPlanesCuota();
     }
 
     @Override
@@ -59,26 +60,40 @@ public class SolicitarCreditoPresenter implements Presenter {
         // todo
     }
     
-    public Cliente buscarCliente(int dni) throws IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage {
+    public void buscarCliente(int dni) {
+        Cliente cliente = null;
         for(Cliente c : Repositorio.getClientes()) {
             System.out.println(c);
             if(c.getDni() == dni) {
-                ResultadoEstadoCliente estadoCliente =  Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), dni);
-            
-                if(!estadoCliente.isConsultaValida()) {
-                    view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "El servicio externo no pudo validar la situacion financiera del cliente.");
+                int creditosActivos = 0;
+                
+                try {
+                    ResultadoEstadoCliente estadoCliente =  Webservice.obtenerEstadoCliente(Repositorio.getFinanciera().getIdentificador(), dni);
+
+                    if(!estadoCliente.isConsultaValida()) {
+                        view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "El servicio externo no pudo validar la situacion financiera del cliente.");
+                    } else {
+                        creditosActivos = estadoCliente.getCantidadCreditosActivos();
+                    }
+                } catch(Exception ex) {
+                    System.out.println(ex.getMessage());
                 }
-            
-                view.actualizarDatosCliente(c, estadoCliente.getCantidadCreditosActivos());
-                return c;
+
+                view.actualizarDatosCliente(c, creditosActivos);
+                cliente = c;
             } 
         }
         
-        view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Cliente no encontrado");
-        return null;
+        if(cliente == null) {
+            view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Cliente no encontrado");
+        }
+        
+        model.setCliente(cliente);
     }
     
-    //private int 
-    
-    
+    private void cargarPlanesCuota() {
+        view.cargarPlanes(Repositorio.getPlanes());
+        model.setPlan(Repositorio.getPlanes().get(0));
+    }
+     
 }
