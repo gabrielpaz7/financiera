@@ -23,13 +23,13 @@ public class Webservice {
         return port.obtenerEstadoCliente(codigoFinanciera, dni);
     }
     
-    private static ResultadoOperacion informarCreditoFinalizado(java.lang.String codigoFinanciera, java.lang.Integer dni, java.lang.String identificadorCredito) throws IServicioPublicoCreditoInformarCreditoFinalizadoErrorServicioFaultFaultMessage {
+    public static ResultadoOperacion informarCreditoFinalizado(java.lang.String codigoFinanciera, java.lang.Integer dni, java.lang.String identificadorCredito) throws IServicioPublicoCreditoInformarCreditoFinalizadoErrorServicioFaultFaultMessage {
         org.tempuri.ServicioPublicoCredito service = new org.tempuri.ServicioPublicoCredito();
         org.tempuri.IServicioPublicoCredito port = service.getSGEBusService();
         return port.informarCreditoFinalizado(codigoFinanciera, dni, identificadorCredito);
     }
 
-    private static ResultadoOperacion informarCreditoOtorgado(java.lang.String codigoFinanciera, java.lang.Integer dni, java.lang.String identificadorCredito, java.lang.Double montoOtorgado) throws IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage {
+    public static ResultadoOperacion informarCreditoOtorgado(java.lang.String codigoFinanciera, java.lang.Integer dni, java.lang.String identificadorCredito, java.lang.Double montoOtorgado) throws IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage {
         org.tempuri.ServicioPublicoCredito service = new org.tempuri.ServicioPublicoCredito();
         org.tempuri.IServicioPublicoCredito port = service.getSGEBusService();
         return port.informarCreditoOtorgado(codigoFinanciera, dni, identificadorCredito, montoOtorgado);

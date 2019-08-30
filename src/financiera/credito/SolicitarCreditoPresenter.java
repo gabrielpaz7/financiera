@@ -12,8 +12,16 @@ import financiera.common.View;
 import financiera.persistencia.Repositorio;
 import financiera.webservice.Webservice;
 import static financiera.webservice.Webservice.obtenerEstadoCliente;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
+import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;
+import org.tempuri.IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage;
 import org.tempuri.IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage;
 
 /**
@@ -63,7 +71,6 @@ public class SolicitarCreditoPresenter implements Presenter {
     public void buscarCliente(int dni) {
         Cliente cliente = null;
         for(Cliente c : Repositorio.getClientes()) {
-            System.out.println(c);
             if(c.getDni() == dni) {
                 int creditosActivos = 0;
                 
@@ -74,6 +81,7 @@ public class SolicitarCreditoPresenter implements Presenter {
                         view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "El servicio externo no pudo validar la situacion financiera del cliente.");
                     } else {
                         creditosActivos = estadoCliente.getCantidadCreditosActivos();
+                        validarSituacionFinanciera(c, creditosActivos);
                     }
                 } catch(Exception ex) {
                     System.out.println(ex.getMessage());
@@ -86,14 +94,71 @@ public class SolicitarCreditoPresenter implements Presenter {
         
         if(cliente == null) {
             view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Cliente no encontrado");
+            view.limpiarDatosCliente();
         }
         
         model.setCliente(cliente);
     }
     
+    private void validarSituacionFinanciera(Cliente cliente, int creditosActivos) {
+        if(creditosActivos > 2) {
+            view.mostrarMensajeError(JOptionPane.INFORMATION_MESSAGE,
+                "Advertencia", 
+                "El cliente no puede realizar nuevos creditos.\n"
+                        + "\n Cliente: " + cliente.getNombreApellido()
+                        + "\n DNI: " + cliente.getDni()
+                        + "\n\n Creditos activos: " + creditosActivos + "\n\n\n");
+            
+            view.limpiarDatosCliente();
+            return;
+        }
+    }
+    
     private void cargarPlanesCuota() {
         view.cargarPlanes(Repositorio.getPlanes());
         model.setPlan(Repositorio.getPlanes().get(0));
+    }
+    
+    public void guardarCredito() {
+        try {
+            model.setNumero((int) Math.random());
+            model.setCuotas(generarCuotas());
+            
+            ResultadoOperacion resultado = Webservice.informarCreditoOtorgado(
+                Repositorio.getFinanciera().getIdentificador(),
+                model.getCliente().getDni(),
+                String.valueOf(model.getNumero()),
+                model.getCapital());
+            
+            if(resultado.isOperacionValida()){
+                model.setEstado(EstadoCredito.ACTIVO);
+                view.mostrarMensajeError(JOptionPane.INFORMATION_MESSAGE, "Información", "Crédito registrado correctamente.");
+            } else {
+                model.setEstado(EstadoCredito.PENDIENTE_DE_INFORMAR);
+                view.mostrarMensajeError(JOptionPane.WARNING_MESSAGE, "Advertencia", "Crédito se registró como \nPENDIENTE DE INFORMAR AL BCRA.");
+            }
+            
+            Repositorio.getCreditos().add(model);
+
+            
+        } catch (IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage ex) {
+            Logger.getLogger(SolicitarCreditoPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private ArrayList<Cuota> generarCuotas() {
+        ArrayList<Cuota> cuotas = new ArrayList<Cuota>();
+        
+        Calendar fechaVencimiento = Calendar.getInstance();
+        
+        for(int i = 0; i <= model.getNumeroCuotas(); i++) {
+            fechaVencimiento.add(Calendar.MONTH, i);
+            fechaVencimiento.set(Calendar.DAY_OF_MONTH, 10);
+            Cuota cuota = new Cuota(i, model.calcularImporteCuota(), fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
+            model.getCuotas().add(cuota);
+        }
+        
+        return cuotas;
     }
      
 }

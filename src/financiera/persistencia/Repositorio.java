@@ -7,6 +7,7 @@ package financiera.persistencia;
 
 import financiera.Financiera;
 import financiera.cliente.Cliente;
+import financiera.credito.Credito;
 import financiera.credito.PlanCuota;
 import financiera.credito.PlanCuotaModalidad;
 import financiera.usuario.Usuario;
@@ -21,12 +22,14 @@ public class Repositorio {
     private static ArrayList<Usuario> usuarios;
     private static ArrayList<Cliente> clientes;
     private static ArrayList<PlanCuota> planes;
+    private static ArrayList<Credito> creditos;
     
     public static void iniciar() {
         iniciarFinanciera();
         iniciarUsuarios();
         iniciarClientes();
         iniciarPlanes();
+        iniciarCreditos();
     }
     
     public static void iniciarFinanciera() {
@@ -50,10 +53,13 @@ public class Repositorio {
     public static void iniciarClientes() {
         clientes = new ArrayList<Cliente>();
         
-        Cliente cliente = new Cliente(33050255, "Cesar Gabriel Paz", "Rivadavia 1050", "3815982851", 50000);
+        Cliente cliente = new Cliente(33050255, "Gabriel Paz", "Rivadavia 1050", "3815982851", 50000);
         clientes.add(cliente);
         
-        cliente = new Cliente(33000000, "Cliente Test", "Rivadavia 1050", "3815982851", 50000);
+        cliente = new Cliente(33000000, "John Doe", "Rivadavia 1050", "3815982851", 50000);
+        clientes.add(cliente);
+        
+        cliente = new Cliente(33000999, "Juan Perz", "Rivadavia 1050", "3815982851", 50000);
         clientes.add(cliente);
     }
     
@@ -65,6 +71,10 @@ public class Repositorio {
         
         plan = new PlanCuota("Plan CUOTA VENCIDA", PlanCuotaModalidad.PRIMERA_CUOTA_VENCIDA, 5, 2);
         planes.add(plan);
+    }
+    
+    private static void iniciarCreditos() {
+        creditos = new ArrayList<Credito>();
     }
 
     public static Financiera getFinanciera() {
@@ -82,4 +92,8 @@ public class Repositorio {
     public static ArrayList<PlanCuota> getPlanes() {
         return planes;
     }  
+
+    public static ArrayList<Credito> getCreditos() {
+        return creditos;
+    }
 }

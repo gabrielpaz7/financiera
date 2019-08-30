@@ -51,7 +51,14 @@ public class Credito implements Model {
     }
     
     public double calcularTotalEntregado() {
-        return capital - calcularGastos();
+        double totalEntregado = 0;
+        
+        if(plan.modalidad == PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA) {
+            totalEntregado = capital - calcularImporteCuota();
+        } else {
+            totalEntregado = capital - calcularGastos();
+        }
+        return totalEntregado;
     }
 
     public int getNumero() {

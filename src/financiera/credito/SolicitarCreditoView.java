@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -31,6 +32,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     public SolicitarCreditoView() {
         initComponents();
         bindEvents();
+        txtLoading.setVisible(false);
+        btnAceptar.setEnabled(false);
     }
 
     @Override
@@ -63,8 +66,16 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         btnBuscarCliente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int dni = Integer.valueOf(fdDni.getText());
-                presenter.buscarCliente(dni);
+                btnAceptar.setEnabled(false);
+                
+                if(!fdDni.getText().equals("")){
+                    int dni = Integer.parseInt(fdDni.getText());
+                    
+                    txtLoading.setVisible(true);
+                    presenter.buscarCliente(dni); 
+                }else{
+                    mostrarMensajeError(JOptionPane.INFORMATION_MESSAGE, "Validacion", "Ingrese DNI");
+                }
             }
         });
         
@@ -86,15 +97,35 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 actualizarDetallesCredito(presenter.getModel());
             }
         });
+        
+        btnAceptar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                presenter.guardarCredito();
+                habilitarImpresion();
+            }
+        });
     }
     
     public void actualizarDatosCliente(Cliente cliente, int creditosActivos){
+        limpiarDatosCliente();
         txtCliente.setText(cliente.getNombreApellido());
         txtDni.setText(String.valueOf(cliente.getDni()));
         txtDomicilio.setText(cliente.getDomicilio());
         txtTelefono.setText(cliente.getTelefono());
         txtSueldo.setText(String.valueOf(cliente.getSueldo()));
         txtCreditosActivos.setText(String.valueOf(creditosActivos));
+        btnAceptar.setEnabled(true);
+    }
+    
+    public void limpiarDatosCliente(){
+        txtLoading.setVisible(false);
+        txtCliente.setText("");
+        txtDni.setText("");
+        txtDomicilio.setText("");
+        txtTelefono.setText("");
+        txtSueldo.setText("");
+        txtCreditosActivos.setText("");
     }
     
     public void mostrarMensajeError(int tipo, String titulo, String mensaje) {
@@ -125,16 +156,26 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     }
     
     public void actualizarDetallesCredito(Credito credito) {
+        String currency = "$ ";
         double capital = Double.valueOf(fdCapital.getText());
         int numeroCuotas = (int) fdCuotas.getValue();
         
         presenter.getModel().setCapital(capital);
         presenter.getModel().setNumeroCuotas(numeroCuotas);
         
-        txtMontoTotal.setText(String.valueOf(credito.calcularMontoTotal()));
-        txtImporteCuota.setText(String.valueOf(credito.calcularImporteCuota()));
-        txtGastos.setText(String.valueOf(credito.calcularGastos()));
-        txtTotalEntregado.setText(String.valueOf(credito.getCapital() - credito.calcularGastos()));
+        DecimalFormat decimalFormat = new DecimalFormat("00.00");
+        
+        txtMontoTotal.setText(currency + decimalFormat.format(credito.calcularMontoTotal()));
+        txtImporteCuota.setText(currency + decimalFormat.format(credito.calcularImporteCuota()));
+        txtGastos.setText(currency + decimalFormat.format(credito.calcularGastos()));
+        txtTotalEntregado.setText(currency + decimalFormat.format(credito.calcularTotalEntregado()));
+    }
+    
+    public void habilitarImpresion() {
+        btnAceptar.setVisible(false);
+        btnCanelar.setText("Cerrar");
+        btnCanelar.setIcon(null);
+        btnImprimirComprobante.setEnabled(true);
     }
     
     
@@ -168,6 +209,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtSueldo = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtCreditosActivos = new javax.swing.JLabel();
+        txtLoading = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         cbPlanCuotas = new javax.swing.JComboBox<>();
@@ -196,6 +238,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtTotalEntregado = new javax.swing.JLabel();
         btnImprimirComprobante = new javax.swing.JButton();
 
+        setClosable(true);
         setTitle("Financiera");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -259,6 +302,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtCreditosActivos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtCreditosActivos.setText("_____________________");
 
+        txtLoading.setText("Cargando...");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -274,7 +319,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(fdDni, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnBuscarCliente))
+                                .addComponent(btnBuscarCliente)
+                                .addGap(27, 27, 27)
+                                .addComponent(txtLoading))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -313,7 +360,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(fdDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarCliente))
+                    .addComponent(btnBuscarCliente)
+                    .addComponent(txtLoading))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -347,9 +395,11 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         radioGroupModalidad.add(radioCuotaAdelantada);
         radioCuotaAdelantada.setText("1º Cuota Adelantada");
+        radioCuotaAdelantada.setEnabled(false);
 
         jLabel17.setText("Porcentaje Mensual   %");
 
+        fdPorcentajeMensual.setEditable(false);
         fdPorcentajeMensual.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fdPorcentajeMensualActionPerformed(evt);
@@ -358,12 +408,15 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         jLabel18.setText("Porcentaje Gastos     %");
 
+        fdPorcentajeGastos.setEditable(false);
+
         jLabel19.setText("Capital                         $");
 
         jLabel20.setText("Cuotas");
 
         radioGroupModalidad.add(radioCuotaVencida);
         radioCuotaVencida.setText("1º Cuota Vencida");
+        radioCuotaVencida.setEnabled(false);
 
         btnCalcularDetalles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/calculator_edit_16.png"))); // NOI18N
         btnCalcularDetalles.setText("Calcular");
@@ -445,7 +498,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         btnAceptar.setText("Aceptar");
 
         btnCanelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/cancel.png"))); // NOI18N
-        btnCanelar.setText("Cancelar");
+        btnCanelar.setText("Cerrar");
         btnCanelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCanelarActionPerformed(evt);
@@ -456,18 +509,22 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         jLabel22.setText("Monto total");
 
+        txtMontoTotal.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtMontoTotal.setText("$___________");
 
         jLabel23.setText("Importe cuota");
 
+        txtImporteCuota.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtImporteCuota.setText("$___________");
 
         jLabel24.setText("Gastos");
 
+        txtGastos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtGastos.setText("$___________");
 
         jLabel25.setText("Importe entregado");
 
+        txtTotalEntregado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtTotalEntregado.setText("$___________");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -487,7 +544,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                     .addComponent(txtGastos)
                     .addComponent(txtImporteCuota)
                     .addComponent(txtMontoTotal))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -513,6 +570,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         btnImprimirComprobante.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/printer_16.png"))); // NOI18N
         btnImprimirComprobante.setText("Imprimir Comprobante");
+        btnImprimirComprobante.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -609,6 +667,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JLabel txtDomicilio;
     private javax.swing.JLabel txtGastos;
     private javax.swing.JLabel txtImporteCuota;
+    private javax.swing.JLabel txtLoading;
     private javax.swing.JLabel txtMontoTotal;
     private javax.swing.JLabel txtSueldo;
     private javax.swing.JLabel txtTelefono;
