@@ -9,16 +9,21 @@ import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.common.Presenter;
 import financiera.common.View;
+import financiera.pdf.Populater;
 import financiera.persistencia.Repositorio;
+import financiera.persistencia.Session;
 import financiera.webservice.Webservice;
 import static financiera.webservice.Webservice.obtenerEstadoCliente;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;
 import org.tempuri.IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage;
@@ -121,7 +126,11 @@ public class SolicitarCreditoPresenter implements Presenter {
     
     public void guardarCredito() {
         try {
-            model.setNumero((int) Math.random());
+            model.setFecha(Calendar.getInstance().getTime());
+            model.setUsuario(Session.getUsuario());
+            
+            Random random = new Random();
+            model.setNumero(random.nextInt(999));
             model.setCuotas(generarCuotas());
             
             ResultadoOperacion resultado = Webservice.informarCreditoOtorgado(
@@ -139,7 +148,6 @@ public class SolicitarCreditoPresenter implements Presenter {
             }
             
             Repositorio.getCreditos().add(model);
-
             
         } catch (IServicioPublicoCreditoInformarCreditoOtorgadoErrorServicioFaultFaultMessage ex) {
             Logger.getLogger(SolicitarCreditoPresenter.class.getName()).log(Level.SEVERE, null, ex);
@@ -159,6 +167,17 @@ public class SolicitarCreditoPresenter implements Presenter {
         }
         
         return cuotas;
+    }
+    
+    
+    public void imprimirComprobanteCredito() {
+        try {
+            Populater.imprimirComprobanteCredito(model);
+        } catch (IOException ex) {
+            Logger.getLogger(SolicitarCreditoPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (COSVisitorException ex) {
+            Logger.getLogger(SolicitarCreditoPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
      
 }

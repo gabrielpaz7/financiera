@@ -16,6 +16,7 @@ import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoC
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;
 import org.tempuri.IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage;
 import financiera.webservice.Webservice;
+import java.util.Random;
 
 /**
  *

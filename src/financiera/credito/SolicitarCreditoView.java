@@ -105,6 +105,13 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 habilitarImpresion();
             }
         });
+        
+        btnImprimirComprobante.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                presenter.imprimirComprobanteCredito();
+            }
+        });
     }
     
     public void actualizarDatosCliente(Cliente cliente, int creditosActivos){
@@ -301,8 +308,6 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         txtCreditosActivos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtCreditosActivos.setText("_____________________");
-
-        txtLoading.setText("Cargando...");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

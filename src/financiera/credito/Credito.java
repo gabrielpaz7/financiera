@@ -8,7 +8,10 @@ package financiera.credito;
 import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.usuario.Usuario;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -24,6 +27,7 @@ public class Credito implements Model {
     PlanCuota plan;
     EstadoCredito estado;
     Usuario usuario;
+    Date fecha;
     ArrayList<Cuota> cuotas;
 
     public Credito() {
@@ -133,6 +137,20 @@ public class Credito implements Model {
         this.usuario = usuario;
     }
 
+    public Date getFecha() {
+        return fecha;
+    }
+    
+    public String getStringFecha() {
+        DateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");  
+        String strDate = dateFormat.format(fecha);
+        return strDate;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+    
     public ArrayList<Cuota> getCuotas() {
         return cuotas;
     }
