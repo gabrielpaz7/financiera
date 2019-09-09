@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Gabriel
  */
-class Cuota {
+public class Cuota {
     int numero;
     double importe;
     Date fechaVencimiento;

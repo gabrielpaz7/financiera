@@ -26,7 +26,9 @@ import financiera.common.View;
 import financiera.credito.Credito;
 import financiera.credito.SolicitarCreditoPresenter;
 import financiera.credito.SolicitarCreditoView;
+import financiera.pago.AbonarCuotasPresenter;
 import financiera.pago.AbonarCuotasView;
+import financiera.pago.Pago;
 import financiera.persistencia.Repositorio;
 import financiera.persistencia.Session;
 
@@ -249,7 +251,9 @@ public class TerminalView extends javax.swing.JFrame implements View{
             @Override
             public void actionPerformed(ActionEvent e) {
                 AbonarCuotasView view = new AbonarCuotasView();
-                //Pago model = new Pago();
+                Pago model = new Pago();
+                AbonarCuotasPresenter presenter = new AbonarCuotasPresenter(model, view);
+                view.setPresenter(presenter);
                 crearVentana(view);                
             }
         });

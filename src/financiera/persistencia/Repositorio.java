@@ -11,7 +11,16 @@ import financiera.credito.Credito;
 import financiera.credito.PlanCuota;
 import financiera.credito.PlanCuotaModalidad;
 import financiera.usuario.Usuario;
+import financiera.credito.Cuota;
+import financiera.credito.EstadoCuota;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -74,7 +83,35 @@ public class Repositorio {
     }
     
     private static void iniciarCreditos() {
-        creditos = new ArrayList<Credito>();
+        try {
+            creditos = new ArrayList<Credito>();
+            
+            Credito credito = new Credito(123, 10000, 11500);
+            credito.setUsuario(usuarios.get(0));
+            credito.setPlan(planes.get(1));
+            
+            DateFormat format = new SimpleDateFormat("dd/mm/yyyy");
+            String strFecha = "01/06/2018";
+            Date fechaSolicitud = format.parse(strFecha);
+            credito.setFecha(fechaSolicitud);
+            
+            credito.setNumeroCuotas(3);
+            
+            for(int i = 0; i <= 3; i++) {
+                Calendar fechaVencimiento = Calendar.getInstance();
+                fechaVencimiento.setTime(fechaSolicitud);
+                fechaVencimiento.add(Calendar.MONTH, i);
+
+                Cuota cuota = new Cuota(1, 3833.33, fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
+                credito.getCuotas().add(cuota);
+            }
+            
+            creditos.add(credito);
+                        
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(Repositorio.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static Financiera getFinanciera() {
