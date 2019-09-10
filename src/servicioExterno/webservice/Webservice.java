@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package financiera.webservice;
+package servicioExterno.webservice;
 
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;

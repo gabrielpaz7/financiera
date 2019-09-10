@@ -15,7 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoEstadoCliente;
 import org.datacontract.schemas._2004._07.sge_service_contracts.ResultadoOperacion;
 import org.tempuri.IServicioPublicoCreditoObtenerEstadoClienteErrorServicioFaultFaultMessage;
-import financiera.webservice.Webservice;
+import servicioExterno.webservice.Webservice;
 import java.util.Random;
 
 /**

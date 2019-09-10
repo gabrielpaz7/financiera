@@ -5,13 +5,18 @@
  */
 package financiera.pago;
 
+import financiera.cliente.Cliente;
 import financiera.common.Presenter;
 import financiera.common.View;
 import financiera.credito.*;
 import financiera.terminal.TerminalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -52,6 +57,15 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                 dispose();
             }
         });
+        
+        btnBuscar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int dni = Integer.valueOf(fdDni.getText());
+                presenter.buscarCliente(dni);
+                
+            }
+        });
     }
 
     @Override
@@ -65,30 +79,51 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
     }
     
     public void mostarListaCuotas(ArrayList<Credito> creditos) {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DecimalFormat decimalFormat = new DecimalFormat("00.00");
+        
         String[] tbHeader = {
             "Credito",
             "Cuota",
             "Importe",
             "Vencimiento",
             "Recargo %",
-            "Total"
+            "Total",
+            "Estado"
         };
         DefaultTableModel tbModel = new DefaultTableModel(tbHeader, 0);
         
         for(Credito credito : creditos) {
-            Object[] row = new Object[6];
-            row[0] = credito.getNumero();
-            row[1] = credito.getNumero();
-            row[2] = credito.getNumero();
-            row[3] = credito.getNumero();
-            row[4] = credito.getNumero();
-            row[5] = credito.getNumero();
+            Object[] row = new Object[7];
             
-            tbModel.addRow(row);
+            //Credito credito = creditos.get(i);
+
+            for(Cuota cuota : credito.getCuotas()) {
+               row[0] = credito.getNumero();
+               row[1] = cuota.getNumero();
+               row[2] = decimalFormat.format(cuota.getImporte());
+               row[3] = dateFormat.format(cuota.getFechaVencimiento());
+               row[4] = decimalFormat.format(credito.getPlan().getPorcentajeMensual());
+               row[5] = decimalFormat.format(credito.getPlan().getPorcentajeMensual());
+               row[6] = cuota.getEstado();
+               
+               tbModel.addRow(row);
+            }
+            
+            System.out.println("view");
+            System.out.println(credito.toString());
         }
         
         tbCreditos.setModel(tbModel);
     }
+    
+    public void mostrarDatosCliente(Cliente cliente) {
+        txtCliente.setText(cliente.getNombreApellido());
+    }
+    
+    public void mostrarMensajeError(int tipo, String titulo, String mensaje) {
+        JOptionPane.showMessageDialog(parentFrame, mensaje, titulo, tipo);
+    }    
     
     
     
@@ -119,6 +154,9 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         jLabel5 = new javax.swing.JLabel();
         fdImporte = new javax.swing.JTextField();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Financiera");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));

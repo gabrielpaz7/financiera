@@ -89,20 +89,21 @@ public class Repositorio {
             Credito credito = new Credito(123, 10000, 11500);
             credito.setUsuario(usuarios.get(0));
             credito.setPlan(planes.get(1));
+            credito.setCliente(clientes.get(1));
             
-            DateFormat format = new SimpleDateFormat("dd/mm/yyyy");
-            String strFecha = "01/06/2018";
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            String strFecha = "10/06/2018";
             Date fechaSolicitud = format.parse(strFecha);
             credito.setFecha(fechaSolicitud);
             
             credito.setNumeroCuotas(3);
             
-            for(int i = 0; i <= 3; i++) {
+            for(int i = 1; i <= 3; i++) {
                 Calendar fechaVencimiento = Calendar.getInstance();
                 fechaVencimiento.setTime(fechaSolicitud);
                 fechaVencimiento.add(Calendar.MONTH, i);
 
-                Cuota cuota = new Cuota(1, 3833.33, fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
+                Cuota cuota = new Cuota(i, 3833.33, fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
                 credito.getCuotas().add(cuota);
             }
             

@@ -5,27 +5,30 @@
  */
 package financiera.pago;
 
+import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.common.Presenter;
 import financiera.common.View;
+import financiera.credito.Credito;
 import financiera.persistencia.Repositorio;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Gabriel
  */
 public class AbonarCuotasPresenter implements Presenter {
+
     Pago model;
     AbonarCuotasView view;
 
     public AbonarCuotasPresenter(Pago model, AbonarCuotasView view) {
         this.model = model;
         this.view = view;
-        
-        view.mostarListaCuotas(Repositorio.getCreditos());
+
     }
-    
-    
+
     @Override
     public void setView(View view) {
         this.view = (AbonarCuotasView) view;
@@ -55,7 +58,40 @@ public class AbonarCuotasPresenter implements Presenter {
     public void updateModel() {
         //
     }
-    
-    
-    
+
+    public void buscarCreditosPorCliente(Cliente cliente) {
+        ArrayList<Credito> creditos = new ArrayList<Credito>();
+
+        for (Credito credito : Repositorio.getCreditos()) {
+            System.out.println(credito.toString());
+            if (credito.getCliente().getDni() == cliente.getDni()) {
+                creditos.add(credito);
+            }
+        }
+
+        view.mostarListaCuotas(creditos);
+    }
+
+    public void buscarCliente(int dni) {
+        boolean encontrado = false;
+        Cliente cliente = null;
+        for (Cliente c : Repositorio.getClientes()) {
+            if (c.getDni() == dni) {
+                cliente = c;
+                encontrado = true;
+            }
+        }
+        
+        if (encontrado) {
+            view.mostrarDatosCliente(cliente);
+            buscarCreditosPorCliente(cliente); 
+        } else {
+            view.mostrarMensajeError(
+                    JOptionPane.WARNING_MESSAGE,
+                    "Advertencia",
+                    "Cliente no encontrado"
+            );
+        }
+    }
+
 }

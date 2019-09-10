@@ -158,5 +158,12 @@ public class Credito implements Model {
     public void setCuotas(ArrayList<Cuota> cuotas) {
         this.cuotas = cuotas;
     }
+
+    @Override
+    public String toString() {
+        return "Credito Nro: " + numero + " - cliente: " + cliente.toString();
+    }
+    
+    
     
 }

@@ -12,8 +12,8 @@ import financiera.common.View;
 import financiera.pdf.Populater;
 import financiera.persistencia.Repositorio;
 import financiera.persistencia.Session;
-import financiera.webservice.Webservice;
-import static financiera.webservice.Webservice.obtenerEstadoCliente;
+import servicioExterno.webservice.Webservice;
+import static servicioExterno.webservice.Webservice.obtenerEstadoCliente;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -131,7 +131,8 @@ public class SolicitarCreditoPresenter implements Presenter {
             
             Random random = new Random();
             model.setNumero(random.nextInt(999));
-            model.setCuotas(generarCuotas());
+            //model.setCuotas(generarCuotas());
+            generarCuotas();
             
             ResultadoOperacion resultado = Webservice.informarCreditoOtorgado(
                 Repositorio.getFinanciera().getIdentificador(),
@@ -157,11 +158,12 @@ public class SolicitarCreditoPresenter implements Presenter {
     private ArrayList<Cuota> generarCuotas() {
         ArrayList<Cuota> cuotas = new ArrayList<Cuota>();
         
-        Calendar fechaVencimiento = Calendar.getInstance();
         
-        for(int i = 0; i <= model.getNumeroCuotas(); i++) {
-            fechaVencimiento.add(Calendar.MONTH, i);
+        for(int i = 1; i <= model.getNumeroCuotas(); i++) {
+            Calendar fechaVencimiento = Calendar.getInstance();
             fechaVencimiento.set(Calendar.DAY_OF_MONTH, 10);
+            fechaVencimiento.add(Calendar.MONTH, i);
+            
             Cuota cuota = new Cuota(i, model.calcularImporteCuota(), fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
             model.getCuotas().add(cuota);
         }
