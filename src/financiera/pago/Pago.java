@@ -5,7 +5,10 @@
  */
 package financiera.pago;
 
+import financiera.cliente.Cliente;
 import financiera.common.Model;
+import financiera.credito.Credito;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -15,13 +18,18 @@ import java.util.Date;
 public class Pago implements Model {
     double importe;
     Date fecha;
+    Cliente cliente;
+    ArrayList<Credito> creditos;
 
     public Pago() {
+        creditos = new ArrayList<Credito>();
     }
 
-    public Pago(double importe, Date fecha) {
+    public Pago(double importe, Date fecha, Cliente cliente, ArrayList<Credito> creditos) {
         this.importe = importe;
         this.fecha = fecha;
+        this.cliente = cliente;
+        this.creditos = creditos;
     }
 
     public double getImporte() {
@@ -39,6 +47,20 @@ public class Pago implements Model {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
-    
-    
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public ArrayList<Credito> getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(ArrayList<Credito> creditos) {
+        this.creditos = creditos;
+    }
 }
