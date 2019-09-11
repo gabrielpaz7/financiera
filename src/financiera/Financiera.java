@@ -14,15 +14,17 @@ public class Financiera {
     String nombreComercial;
     String razonSocial;
     int cuit;
-    
-    public static double RECARGO_DIARIO = 0.5;
+    double recargoDiarioPorVencimiento;
 
-    public Financiera(String identificador, String nombreComercial, String razonSocial, int cuit) {
+    
+    public Financiera(String identificador, String nombreComercial, String razonSocial, int cuit, double recargoDiarioPorVencimiento) {
         this.identificador = identificador;
         this.nombreComercial = nombreComercial;
         this.razonSocial = razonSocial;
         this.cuit = cuit;
+        this.recargoDiarioPorVencimiento = recargoDiarioPorVencimiento;
     }
+
 
     public String getIdentificador() {
         return identificador;
@@ -55,6 +57,12 @@ public class Financiera {
     public void setCuit(int cuit) {
         this.cuit = cuit;
     }
-    
-    
+
+    public double getRecargoDiarioPorVencimiento() {
+        return recargoDiarioPorVencimiento;
+    }
+
+    public void setRecargoDiarioPorVencimiento(double recargoDiarioPorVencimiento) {
+        this.recargoDiarioPorVencimiento = recargoDiarioPorVencimiento;
+    }
 }

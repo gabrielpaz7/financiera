@@ -43,7 +43,7 @@ public class Repositorio {
     
     public static void iniciarFinanciera() {
         financiera = new Financiera("a695dcdb-6bb0-4635-be85-39413c3ff6c1",
-            "La Financiera", "Financiera S.A.", 999);
+            "La Financiera", "Financiera S.A.", 999, 0.5);
     }
     
     public static void iniciarUsuarios(){
@@ -92,7 +92,7 @@ public class Repositorio {
             credito.setCliente(clientes.get(1));
             
             DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            String strFecha = "10/06/2018";
+            String strFecha = "10/06/2019";
             Date fechaSolicitud = format.parse(strFecha);
             credito.setFecha(fechaSolicitud);
             

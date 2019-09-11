@@ -9,7 +9,7 @@ import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.common.Presenter;
 import financiera.common.View;
-import financiera.pdf.Populater;
+import financiera.pdf.DocumentoPDF;
 import financiera.persistencia.Repositorio;
 import financiera.persistencia.Session;
 import servicioExterno.webservice.Webservice;
@@ -174,7 +174,7 @@ public class SolicitarCreditoPresenter implements Presenter {
     
     public void imprimirComprobanteCredito() {
         try {
-            Populater.imprimirComprobanteCredito(model);
+            DocumentoPDF.imprimirComprobanteCredito(model);
         } catch (IOException ex) {
             Logger.getLogger(SolicitarCreditoPresenter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (COSVisitorException ex) {

@@ -9,6 +9,7 @@ import financiera.cliente.Cliente;
 import financiera.common.Presenter;
 import financiera.common.View;
 import financiera.credito.*;
+import financiera.persistencia.Repositorio;
 import financiera.terminal.TerminalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -78,7 +79,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         return this.presenter;
     }
     
-    public void mostarListaCuotas(ArrayList<Credito> creditos) {
+    public void mostarListaCuotas(ArrayList<Credito> creditos, double recargoDiarioPorVencimiento) {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DecimalFormat decimalFormat = new DecimalFormat("00.00");
         
@@ -88,13 +89,14 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             "Importe",
             "Vencimiento",
             "Recargo %",
+            "Recargo $",
             "Total",
             "Estado"
         };
         DefaultTableModel tbModel = new DefaultTableModel(tbHeader, 0);
         
         for(Credito credito : creditos) {
-            Object[] row = new Object[7];
+            Object[] row = new Object[8];
             
             //Credito credito = creditos.get(i);
 
@@ -103,9 +105,10 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                row[1] = cuota.getNumero();
                row[2] = decimalFormat.format(cuota.getImporte());
                row[3] = dateFormat.format(cuota.getFechaVencimiento());
-               row[4] = decimalFormat.format(credito.getPlan().getPorcentajeMensual());
-               row[5] = decimalFormat.format(credito.getPlan().getPorcentajeMensual());
-               row[6] = cuota.getEstado();
+               row[4] = decimalFormat.format(recargoDiarioPorVencimiento);
+               row[5] = decimalFormat.format(cuota.calcularImporteRecargo(recargoDiarioPorVencimiento));
+               row[6] = decimalFormat.format(cuota.calcularTotal(recargoDiarioPorVencimiento));
+               row[7] = cuota.getEstado();
                
                tbModel.addRow(row);
             }
@@ -153,6 +156,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         fdImporte = new javax.swing.JTextField();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setClosable(true);
         setIconifiable(true);
@@ -210,7 +214,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBuscar))
                     .addComponent(txtCliente))
-                .addContainerGap(420, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,13 +241,13 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
 
         tbCreditos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Credito", "Cuota", "Importe", "Vencimiento", "Recargo %", "Total", "Estado"
+                "Credito", "Cuota", "Importe", "Vencimiento", "Recargo %", "Recargo $", "Total", "Estado"
             }
         ));
         jScrollPane1.setViewportView(tbCreditos);
@@ -282,13 +286,15 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(149, 149, 149)
                         .addComponent(btnCancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAceptar)))
@@ -303,14 +309,20 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel30)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAceptar)
-                    .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
 
         pack();
@@ -324,6 +336,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField fdDni;
     private javax.swing.JTextField fdImporte;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

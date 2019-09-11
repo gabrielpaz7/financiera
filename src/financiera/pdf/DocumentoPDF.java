@@ -21,42 +21,10 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
  *
  * @author Gabriel
  */
-public class Populater {
+public class DocumentoPDF {
 
     private static PDDocument _pdfDocument;
 
-    public static void main(String[] args) {
-
-            String originalPdf = "D:\\formFinanciera.pdf";
-            String targetPdf = "D:\\formFinancieraEditado.pdf";
-
-            try {
-                    populateAndCopy(originalPdf, targetPdf);
-
-                    //open the file
-                    File file = new File(targetPdf);
-                    Desktop.getDesktop().open(file);
-
-            } catch (IOException | COSVisitorException e) {
-                    e.printStackTrace();
-            }
-
-            System.out.println("Complete");
-    }
-
-    private static void populateAndCopy(String originalPdf, String targetPdf) throws IOException, COSVisitorException {
-            _pdfDocument = PDDocument.load(originalPdf);
-
-            _pdfDocument.getNumberOfPages();
-            //printFields();  //Uncomment to see the fields in this document in console
-
-            setField("cliente", "CESAR GABRIEL PAZ");
-            setField("numeroRecibo", "999");
-            setField("Nro CréditoRow1", "666");
-            _pdfDocument.save(targetPdf);
-            _pdfDocument.close();
-    }
-    
     public static void imprimirComprobanteCredito(Credito credito) throws IOException, COSVisitorException {
         
         String cwd = System.getProperty("user.dir");
@@ -105,8 +73,8 @@ public class Populater {
         
         _pdfDocument = PDDocument.load(originalPdf);
 
-            _pdfDocument.getNumberOfPages();
-            //printFields();  //Uncomment to see the fields in this document in console
+        //_pdfDocument.getNumberOfPages();
+        //printFields();  //Uncomment to see the fields in this document in console
 
         setField("cliente", "CESAR GABRIEL PAZ");
         setField("numeroRecibo", "999");
@@ -131,7 +99,7 @@ public class Populater {
     }
 
     @SuppressWarnings("rawtypes")
-	public static void printFields() throws IOException {
+    public static void printFields() throws IOException {
         PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
         PDAcroForm acroForm = docCatalog.getAcroForm();
         List fields = acroForm.getFields();
@@ -146,8 +114,7 @@ public class Populater {
     }
     
     @SuppressWarnings("rawtypes")
-	private static void processField(PDField field, String sLevel, String sParent) throws IOException
-    {
+    private static void processField(PDField field, String sLevel, String sParent) throws IOException {
         List kids = field.getKids();
         if(kids != null) {
             Iterator kidsIter = kids.iterator();

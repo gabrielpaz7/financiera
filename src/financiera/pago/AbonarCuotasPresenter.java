@@ -69,7 +69,8 @@ public class AbonarCuotasPresenter implements Presenter {
             }
         }
 
-        view.mostarListaCuotas(creditos);
+        double recargoDiarioPorVencimiento = Repositorio.getFinanciera().getRecargoDiarioPorVencimiento();
+        view.mostarListaCuotas(creditos, recargoDiarioPorVencimiento);
     }
 
     public void buscarCliente(int dni) {
@@ -92,6 +93,15 @@ public class AbonarCuotasPresenter implements Presenter {
                     "Cliente no encontrado"
             );
         }
+    }
+    
+    /**
+     * Verifica las cuotas vencidas y calcula el recargo correspondiente
+     * @param credito 
+     */
+    public void verificarCuotasVencidas(Credito credito) {
+
+        
     }
 
 }
