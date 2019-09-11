@@ -6,9 +6,12 @@
 package financiera.pdf;
 
 import financiera.credito.Credito;
+import financiera.pago.Pago;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.pdfbox.exceptions.COSVisitorException;
@@ -66,26 +69,39 @@ public class DocumentoPDF {
         Desktop.getDesktop().open(file);
     }
     
-    public static void imprimirReciboPago(String pago) throws IOException, COSVisitorException {
+    public static void imprimirReciboPago(Pago pago) throws IOException, COSVisitorException {
         
-        String originalPdf = "D:\\formFinanciera.pdf";
-        String targetPdf = "D:\\formFinancieraEditado.pdf";
+        String cwd = System.getProperty("user.dir");
+        String originalPdf = cwd + "\\pdf-templates\\ReciboPago.pdf";
+        
+        System.out.println(originalPdf);
+        String targetPdf = cwd + "\\temp\\ReciboPago-" + pago.getNumeroOperacion() +".pdf";
         
         _pdfDocument = PDDocument.load(originalPdf);
 
         //_pdfDocument.getNumberOfPages();
         //printFields();  //Uncomment to see the fields in this document in console
 
-        setField("cliente", "CESAR GABRIEL PAZ");
-        setField("numeroRecibo", "999");
-        setField("Nro CréditoRow1", "666");
+        DateFormat df = new SimpleDateFormat("dd/MM/YYYY");
+        
+        //Datos Pago
+        setField("Fecha", df.format(pago.getFecha()));
+        setField("Empleado", pago.getUsuario().getNombreApellido());
+        setField("numeroRecibo", String.valueOf(pago.getNumeroOperacion()));
+        
         _pdfDocument.save(targetPdf);
         _pdfDocument.close();
         
         File file = new File(targetPdf);
         Desktop.getDesktop().open(file);        
     }
-	
+    
+    /**
+     * NO EDITAR
+     * @param name
+     * @param value
+     * @throws IOException 
+     */
     public static void setField(String name, String value ) throws IOException {
         PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
         PDAcroForm acroForm = docCatalog.getAcroForm();
@@ -98,6 +114,10 @@ public class DocumentoPDF {
         }
     }
 
+    /**
+     * NO EDITAR
+     * @throws IOException 
+     */
     @SuppressWarnings("rawtypes")
     public static void printFields() throws IOException {
         PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
@@ -113,6 +133,13 @@ public class DocumentoPDF {
         }
     }
     
+    /**
+     * NO EDITAR
+     * @param field
+     * @param sLevel
+     * @param sParent
+     * @throws IOException 
+     */
     @SuppressWarnings("rawtypes")
     private static void processField(PDField field, String sLevel, String sParent) throws IOException {
         List kids = field.getKids();
