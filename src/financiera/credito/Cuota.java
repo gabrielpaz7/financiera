@@ -95,8 +95,11 @@ public class Cuota {
     
     public int calcularDiasDesdeVencimiento() {
         Calendar fechaActual = Calendar.getInstance();
-        long diffMillies = Math.abs(fechaActual.getTime().getTime() - fechaVencimiento.getTime());
-        long dias = TimeUnit.DAYS.convert(diffMillies, TimeUnit.MILLISECONDS);
+        long dias = 0;
+        if(fechaActual.getTime().getTime() > fechaVencimiento.getTime()) {
+            long diffMillies = Math.abs(fechaActual.getTime().getTime() - fechaVencimiento.getTime());
+            dias = TimeUnit.DAYS.convert(diffMillies, TimeUnit.MILLISECONDS);
+        } 
         
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         System.out.println("Fecha1: "  + dateFormat.format(fechaActual.getTime()));
@@ -105,18 +108,23 @@ public class Cuota {
         
         if(dias > 0) {
             estado = EstadoCuota.VENCIDA;
+        } else {
+            estado = EstadoCuota.PENDIENTE;
         }
         
         return (int) dias;
     }
     
     public double calcularImporteRecargo(double recargoDiario) {
+        int diasVencimiento = calcularDiasDesdeVencimiento();
         double importeRecargoDiario = importe * (recargoDiario / 100);
-        return importeRecargoDiario * calcularDiasDesdeVencimiento();
+        double importeRecargoTotal = importeRecargoDiario * diasVencimiento;
+        interesCobrado = importeRecargoTotal;
+        return importeRecargoTotal;
     }
     
     public double calcularTotal(double recargoDiario) {
-        return calcularImporteRecargo(recargoDiario) + importe;
+        return interesCobrado + importe;
     }
     
 }

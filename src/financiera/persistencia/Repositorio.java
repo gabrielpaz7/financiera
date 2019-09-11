@@ -92,7 +92,7 @@ public class Repositorio {
             credito.setCliente(clientes.get(1));
             
             DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            String strFecha = "10/06/2019";
+            String strFecha = "10/07/2019";
             Date fechaSolicitud = format.parse(strFecha);
             credito.setFecha(fechaSolicitud);
             

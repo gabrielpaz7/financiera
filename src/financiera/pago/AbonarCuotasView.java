@@ -98,8 +98,6 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         for(Credito credito : creditos) {
             Object[] row = new Object[8];
             
-            //Credito credito = creditos.get(i);
-
             for(Cuota cuota : credito.getCuotas()) {
                row[0] = credito.getNumero();
                row[1] = cuota.getNumero();
@@ -112,9 +110,6 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                
                tbModel.addRow(row);
             }
-            
-            System.out.println("view");
-            System.out.println(credito.toString());
         }
         
         tbCreditos.setModel(tbModel);
