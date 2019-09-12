@@ -8,9 +8,11 @@ package financiera.pago;
 import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.credito.Credito;
+import financiera.credito.Cuota;
 import financiera.usuario.Usuario;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  *
@@ -81,6 +83,21 @@ public class Pago implements Model {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    
+    public void pagarCuotas(ArrayList<Credito> creditos) {
+        double importePagado = importe;
+        for(Credito credito : creditos) {
+            if(credito.getEstado().equals(EstadoCredito.MOROSO)) {
+                Iterator iter = credito.getCuotas().iterator();
+                while(importePagado > 0 && iter.hasNext()) {
+                    Cuota cuota = (Cuota) iter.next();
+                    importePagado = importePagado - cuota.calcularTotal(importePagado);
+                    cuota.setFechaPago(fecha);
+                    cuota.setInteresCobrado();
+                }
+            }
+        }
     }
     
 }

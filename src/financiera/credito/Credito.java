@@ -165,5 +165,22 @@ public class Credito implements Model {
     }
     
     
+    public EstadoCredito verificarEstadoCredito() {
+        int contador = 0;
+        for(Cuota cuota : cuotas) {
+            if(cuota.getEstado().equals(EstadoCuota.VENCIDA) ||
+                cuota.calcularDiasDesdeVencimiento() > 0) {
+                contador++;
+            }
+        }
+        
+        if(contador >= 2) {
+            estado = EstadoCredito.MOROSO;
+        }
+        
+        return estado;
+    }
+    
+    
     
 }

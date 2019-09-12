@@ -4,21 +4,8 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/xampp/htdocs/financiera/src/financiera/persistencia/Repositorio.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/PlanCuotaModalidad.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pago/Pago.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pago/AbonarCuotasView.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pago/AbonarCuotasPresenter.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/webservice0/Webservice0.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pdf/Populater.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/usuario/Usuario.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/SolicitarCreditoView.java</file>
             <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/Cuota.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/cliente/Cliente.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/terminal/Terminal.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/Credito.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/terminal/TerminalView.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/SolicitarCreditoPresenter.java</file>
-            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/PlanCuota.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pdf/DocumentoPDF.java</file>
         </group>
     </open-files>
 </project-private>

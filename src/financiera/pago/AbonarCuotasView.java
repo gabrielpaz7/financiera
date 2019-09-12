@@ -105,7 +105,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                row[3] = dateFormat.format(cuota.getFechaVencimiento());
                row[4] = decimalFormat.format(recargoDiarioPorVencimiento);
                row[5] = decimalFormat.format(cuota.calcularImporteRecargo(recargoDiarioPorVencimiento));
-               row[6] = decimalFormat.format(cuota.calcularTotal(recargoDiarioPorVencimiento));
+               row[6] = decimalFormat.format(cuota.getTotal());
                row[7] = cuota.getEstado();
                
                tbModel.addRow(row);

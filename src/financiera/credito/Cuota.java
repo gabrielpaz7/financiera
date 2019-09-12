@@ -123,7 +123,7 @@ public class Cuota {
         return importeRecargoTotal;
     }
     
-    public double calcularTotal(double recargoDiario) {
+    public double getTotal() {
         return interesCobrado + importe;
     }
     
