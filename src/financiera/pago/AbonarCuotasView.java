@@ -67,6 +67,14 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                 
             }
         });
+        
+        btnAceptar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double importe = Double.valueOf(fdImporte.getText());
+                presenter.guardarPago(importe);
+            }
+        });
     }
 
     @Override

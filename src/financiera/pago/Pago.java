@@ -9,8 +9,11 @@ import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.credito.Credito;
 import financiera.credito.Cuota;
+import financiera.credito.EstadoCredito;
+import financiera.credito.EstadoCuota;
 import financiera.usuario.Usuario;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -86,18 +89,42 @@ public class Pago implements Model {
     }
     
     public void pagarCuotas(ArrayList<Credito> creditos) {
+        ArrayList<Credito> creditosPagados = new ArrayList<Credito>();
         double importePagado = importe;
+        
+        //Collections.sort(creditos);
+        
         for(Credito credito : creditos) {
-            if(credito.getEstado().equals(EstadoCredito.MOROSO)) {
-                Iterator iter = credito.getCuotas().iterator();
-                while(importePagado > 0 && iter.hasNext()) {
-                    Cuota cuota = (Cuota) iter.next();
-                    importePagado = importePagado - cuota.calcularTotal(importePagado);
+            /*if(credito.getEstado().equals(EstadoCredito.MOROSO)) {
+                
+            } else {
+               
+            }*/
+            Iterator iter = credito.getCuotas().iterator();
+            while(importePagado > 0 && iter.hasNext()) {
+                Cuota cuota = (Cuota) iter.next();
+
+                if(importePagado > cuota.getTotal()) {
+                   importePagado = importePagado - cuota.getTotal();
+                   cuota.setFechaPago(fecha);
+                   cuota.setSaldoPendiente(0);
+                   cuota.setEstado(EstadoCuota.PAGADA);
+                } else {
+                    importePagado = importePagado - cuota.getTotal();
+                    cuota.setSaldoPendiente(importePagado * (-1));
                     cuota.setFechaPago(fecha);
-                    cuota.setInteresCobrado();
-                }
+                    cuota.setEstado(EstadoCuota.PAGADA_PARCIALMENTE);
+                } 
+
+            }
+            
+            this.creditos.add(credito);
+            
+            if(importePagado <= 0){
+                break;
             }
         }
     }
+
     
 }

@@ -10,9 +10,18 @@ import financiera.common.Model;
 import financiera.common.Presenter;
 import financiera.common.View;
 import financiera.credito.Credito;
+import financiera.credito.EstadoCredito;
+import financiera.pdf.DocumentoPDF;
 import financiera.persistencia.Repositorio;
+import financiera.persistencia.Session;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 
 /**
  *
@@ -22,6 +31,7 @@ public class AbonarCuotasPresenter implements Presenter {
 
     Pago model;
     AbonarCuotasView view;
+    ArrayList<Credito> creditos;
 
     public AbonarCuotasPresenter(Pago model, AbonarCuotasView view) {
         this.model = model;
@@ -65,12 +75,14 @@ public class AbonarCuotasPresenter implements Presenter {
         for (Credito credito : Repositorio.getCreditos()) {
             System.out.println(credito.toString());
             if (credito.getCliente().getDni() == cliente.getDni()) {
+                credito.verificarEstadoCredito();
                 creditos.add(credito);
             }
         }
 
         double recargoDiarioPorVencimiento = Repositorio.getFinanciera().getRecargoDiarioPorVencimiento();
         view.mostarListaCuotas(creditos, recargoDiarioPorVencimiento);
+        this.creditos = creditos;
     }
 
     public void buscarCliente(int dni) {
@@ -79,6 +91,7 @@ public class AbonarCuotasPresenter implements Presenter {
         for (Cliente c : Repositorio.getClientes()) {
             if (c.getDni() == dni) {
                 cliente = c;
+                model.setCliente(cliente);
                 encontrado = true;
             }
         }
@@ -95,13 +108,27 @@ public class AbonarCuotasPresenter implements Presenter {
         }
     }
     
-    /**
-     * Verifica las cuotas vencidas y calcula el recargo correspondiente
-     * @param credito 
-     */
-    public void verificarCuotasVencidas(Credito credito) {
 
-        
+    public void guardarPago(Double importe) {
+        try {
+            model.setImporte(importe);
+            model.setFecha(Calendar.getInstance().getTime());
+            
+            Random random = new Random();
+            model.setNumeroOperacion(random.nextInt(999));
+            
+            model.setUsuario(Session.getUsuario());
+            
+            model.pagarCuotas(this.creditos);
+            
+            view.mostrarMensajeError(JOptionPane.INFORMATION_MESSAGE, "Confirmacion", "Pago aceptado.");
+            
+            DocumentoPDF.imprimirReciboPago(model);
+        } catch (IOException ex) {
+            Logger.getLogger(AbonarCuotasPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (COSVisitorException ex) {
+            Logger.getLogger(AbonarCuotasPresenter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

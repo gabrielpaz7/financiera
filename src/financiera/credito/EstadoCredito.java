@@ -10,9 +10,10 @@ package financiera.credito;
  * @author Gabriel
  */
 public enum EstadoCredito {
-    PENDIENTE_DE_INFORMAR,
     ACTIVO,
+    PENDIENTE_DE_INFORMAR,
+    PENDIENTE_FINALIZACION,
     FINALIZADO,
-    MOROSO,
-    PENDIENTE_FINALIZACION
+    MOROSO
+    
 }

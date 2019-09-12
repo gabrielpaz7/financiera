@@ -85,21 +85,27 @@ public class DocumentoPDF {
         DateFormat df = new SimpleDateFormat("dd/MM/YYYY");
         
         //Datos Pago
-        setField("Fecha", df.format(pago.getFecha()));
-        setField("Empleado", pago.getUsuario().getNombreApellido());
+        setField("fecha", df.format(pago.getFecha()));
+        setField("empleado", pago.getUsuario().getNombreApellido());
         setField("numeroRecibo", String.valueOf(pago.getNumeroOperacion()));
         setField("cliente", pago.getCliente().getNombreApellido());
-        for(int i=1; i<= pago.getCreditos().size(); i++){
-            setField("Nro CréditoRow"+i, String.valueOf(pago.getCreditos().get(i).getNumero()));
-            for(int j=1;j<= pago.getCreditos().get(i).getCuotas().size();j++){
-                setField("Nro CuotaRow" +j ,String.valueOf(pago.getCreditos().get(i).getNumeroCuotas()));
-                setField("Nro ImporteRow" +j ,String.valueOf(pago.getImporte()));
-                setField("Fecha VencimientoRow" + j, df.format(pago.getCreditos().get(i).getCuotas().get(j).getFechaVencimiento()));
-                setField("Intereses por moraRow" + j, String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getInteresCobrado()));
-                setField("total AbonadoRow" + j, String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getTotal()));
+        for(int i=0; i < pago.getCreditos().size(); i++){
+            
+            for(int j=0;j < pago.getCreditos().get(i).getCuotas().size();j++){
+                setField("Nro CréditoRow"+(i+1), String.valueOf(pago.getCreditos().get(i).getNumero()));
+                
+                setField("Nro CuotaRow" + (j+1) ,String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getNumero()));
+                
+                setField("ImporteRow" + (j+1) ,String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getImporte()));
+                
+                setField("Fecha VencimientoRow" + (j+1), df.format(pago.getCreditos().get(i).getCuotas().get(j).getFechaVencimiento()));
+                
+                setField("Intereses por moraRow" + (j+1), String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getInteresCobrado()));
+                
+                setField("Total AbonadoRow" + (j+1), String.valueOf(pago.getCreditos().get(i).getCuotas().get(j).getTotal()));
             }     
         }
-        setField("importe Total", String.valueOf(pago.getImporte()));
+        setField("importeTotal", String.valueOf(pago.getImporte()));
         
         _pdfDocument.save(targetPdf);
         _pdfDocument.close();
