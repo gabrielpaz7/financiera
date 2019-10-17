@@ -14,6 +14,7 @@ public class PlanCuota {
     PlanCuotaModalidad modalidad; // primera cuota vencida - primera cuota adelantada
     double porcentajeMensual;
     double procentajeGastos;
+    int cuotas;
 
     public PlanCuota() {
     }
@@ -24,6 +25,15 @@ public class PlanCuota {
         this.porcentajeMensual = porcentajeMensual;
         this.procentajeGastos = procentajeGastos;
     }
+
+    public PlanCuota(String descripcion, PlanCuotaModalidad modalidad, double porcentajeMensual, double procentajeGastos, int cuotas) {
+        this.descripcion = descripcion;
+        this.modalidad = modalidad;
+        this.porcentajeMensual = porcentajeMensual;
+        this.procentajeGastos = procentajeGastos;
+        this.cuotas = cuotas;
+    }
+    
 
     public String getDescripcion() {
         return descripcion;
@@ -55,6 +65,14 @@ public class PlanCuota {
 
     public void setModalidad(PlanCuotaModalidad modalidad) {
         this.modalidad = modalidad;
+    }
+
+    public int getCuotas() {
+        return cuotas;
+    }
+
+    public void setCuotas(int cuotas) {
+        this.cuotas = cuotas;
     }
     
     @Override

@@ -41,12 +41,12 @@ public class Repositorio {
         iniciarCreditos();
     }
     
-    public static void iniciarFinanciera() {
+    private static void iniciarFinanciera() {
         financiera = new Financiera("a695dcdb-6bb0-4635-be85-39413c3ff6c1",
             "La Financiera", "Financiera S.A.", 999, 0.5);
     }
     
-    public static void iniciarUsuarios(){
+    private static void iniciarUsuarios(){
         usuarios = new ArrayList<Usuario>();
         
         Usuario usuario = new Usuario("admin", "admin", 1, "Gabriel Paz");
@@ -59,7 +59,7 @@ public class Repositorio {
         usuarios.add(usuario);
     }
     
-    public static void iniciarClientes() {
+    private static void iniciarClientes() {
         clientes = new ArrayList<Cliente>();
         
         Cliente cliente = new Cliente(33050255, "Gabriel Paz", "Rivadavia 1050", "3815982851", 50000);
@@ -75,10 +75,10 @@ public class Repositorio {
     private static void iniciarPlanes() {
         planes = new ArrayList<PlanCuota>();
         
-        PlanCuota plan = new PlanCuota("Plan CUOTA ADELANTADA", PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA, 5, 0);
+        PlanCuota plan = new PlanCuota("Plan CUOTA ADELANTADA x 3 Cuotas", PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA, 5, 0, 3);
         planes.add(plan);
         
-        plan = new PlanCuota("Plan CUOTA VENCIDA", PlanCuotaModalidad.PRIMERA_CUOTA_VENCIDA, 5, 2);
+        plan = new PlanCuota("Plan CUOTA VENCIDA x 3 Cuotas", PlanCuotaModalidad.PRIMERA_CUOTA_VENCIDA, 5, 2, 3);
         planes.add(plan);
     }
     

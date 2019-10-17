@@ -153,7 +153,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     public void actualizarDatosPlan(PlanCuota plan) {
         fdPorcentajeMensual.setText(String.valueOf(plan.getPorcentajeMensual()));
         fdPorcentajeGastos.setText(String.valueOf(plan.getProcentajeGastos()));
-        fdCuotas.setValue(2);
+        fdCuotas.setValue(plan.getCuotas());
         
         if(plan.getModalidad() == PlanCuotaModalidad.PRIMERA_CUOTA_ADELANTADA){
             radioCuotaAdelantada.setSelected(true);
@@ -226,12 +226,12 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         fdPorcentajeMensual = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         fdPorcentajeGastos = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
-        fdCapital = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         fdCuotas = new javax.swing.JSpinner();
         radioCuotaVencida = new javax.swing.JRadioButton();
         btnCalcularDetalles = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
+        fdCapital = new javax.swing.JTextField();
         btnAceptar = new javax.swing.JButton();
         btnCanelar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -415,9 +415,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         fdPorcentajeGastos.setEditable(false);
 
-        jLabel19.setText("Capital                         $");
-
         jLabel20.setText("Cuotas");
+
+        fdCuotas.setEnabled(false);
 
         radioGroupModalidad.add(radioCuotaVencida);
         radioCuotaVencida.setText("1º Cuota Vencida");
@@ -425,6 +425,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
 
         btnCalcularDetalles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financiera/resources/calculator_edit_16.png"))); // NOI18N
         btnCalcularDetalles.setText("Calcular");
+
+        jLabel19.setText("Capital                         $");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -446,24 +448,24 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                                 .addComponent(radioCuotaVencida)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel17)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(fdPorcentajeMensual))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel18)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(fdPorcentajeGastos))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel19)
-                                    .addComponent(jLabel20))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addGap(84, 84, 84)
+                                .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel19)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(fdCapital)
-                                    .addComponent(fdCuotas, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(fdCapital)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCalcularDetalles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -489,13 +491,14 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                     .addComponent(fdPorcentajeGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel19)
-                    .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCalcularDetalles))
+                    .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCalcularDetalles)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel19)
+                        .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -537,7 +540,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel22)
                     .addComponent(jLabel23)

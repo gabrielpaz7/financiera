@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import servicioExterno.webservice.Webservice;
 
 /**
  *
@@ -119,7 +120,7 @@ public class AbonarCuotasPresenter implements Presenter {
             
             model.setUsuario(Session.getUsuario());
             
-            model.pagarCuotas(this.creditos);
+            model.pagarCuotas(this.creditos);           
             
             view.mostrarMensajeError(JOptionPane.INFORMATION_MESSAGE, "Confirmacion", "Pago aceptado.");
             
