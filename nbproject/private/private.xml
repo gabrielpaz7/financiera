@@ -2,6 +2,16 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/persistencia/Repositorio.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/servicioExterno/webservice/Webservice.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/SolicitarCreditoView.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/Cuota.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/cliente/Cliente.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/pago/Pago.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/Credito.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/PlanCuota.java</file>
+            <file>file:/D:/xampp/htdocs/financiera/src/financiera/credito/SolicitarCreditoPresenter.java</file>
+        </group>
     </open-files>
 </project-private>
