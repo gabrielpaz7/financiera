@@ -155,7 +155,7 @@ public class SolicitarCreditoPresenter implements Presenter {
         }
     }
     
-    private ArrayList<Cuota> generarCuotas() {
+    public ArrayList<Cuota> generarCuotas() {
         ArrayList<Cuota> cuotas = new ArrayList<Cuota>();
         
         

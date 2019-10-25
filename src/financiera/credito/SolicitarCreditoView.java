@@ -13,11 +13,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DateFormatter;
 
 /**
  *
@@ -169,6 +174,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         
         presenter.getModel().setCapital(capital);
         presenter.getModel().setNumeroCuotas(numeroCuotas);
+        presenter.generarCuotas();
         
         DecimalFormat decimalFormat = new DecimalFormat("00.00");
         
@@ -176,6 +182,8 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtImporteCuota.setText(currency + decimalFormat.format(credito.calcularImporteCuota()));
         txtGastos.setText(currency + decimalFormat.format(credito.calcularGastos()));
         txtTotalEntregado.setText(currency + decimalFormat.format(credito.calcularTotalEntregado()));
+        
+        mostrarTablaCuotas(credito.getCuotas());
     }
     
     public void habilitarImpresion() {
@@ -183,6 +191,26 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         btnCanelar.setText("Cerrar");
         btnCanelar.setIcon(null);
         btnImprimirComprobante.setEnabled(true);
+    }
+    
+    public void mostrarTablaCuotas(ArrayList<Cuota> cuotas) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+        DecimalFormat decimalFormat = new DecimalFormat("00.00");
+        
+        String[] tbHeader = {"Nro. Cuota", "Importe", "Fecha Vencimiento"};
+        
+        DefaultTableModel tbModel = new DefaultTableModel(tbHeader, 0);
+        
+        for(Cuota cuota : cuotas) {
+            Object[] row = new Object[3];
+            row[0] = cuota.getNumero();
+            row[1] = decimalFormat.format(cuota.getImporte());
+            row[2] = dateFormat.format(cuota.getFechaVencimiento());
+
+            tbModel.addRow(row);            
+        }
+        
+        tbCuotas.setModel(tbModel);
     }
     
     
@@ -243,6 +271,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtGastos = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         txtTotalEntregado = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbCuotas = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
         btnImprimirComprobante = new javax.swing.JButton();
 
         setClosable(true);
@@ -307,7 +338,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         jLabel13.setText("Créditos activos:");
 
         txtCreditosActivos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        txtCreditosActivos.setText("_____________________");
+        txtCreditosActivos.setText("_______________________");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -344,18 +375,19 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                                 .addGap(38, 38, 38)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel13)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtCreditosActivos))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel9)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtTelefono))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel5)
                                         .addGap(18, 18, 18)
-                                        .addComponent(txtDni)))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                        .addComponent(txtDni))
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jLabel13)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(txtCreditosActivos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jLabel9)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(txtTelefono))))))
+                        .addGap(0, 269, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -494,11 +526,11 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                     .addComponent(jLabel20)
                     .addComponent(fdCuotas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(11, 11, 11)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCalcularDetalles)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel19)
-                        .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(fdCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCalcularDetalles))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -535,24 +567,51 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
         txtTotalEntregado.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         txtTotalEntregado.setText("$___________");
 
+        tbCuotas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Nro Cuota", "Importe", "Fecha Vencimiento"
+            }
+        ));
+        jScrollPane1.setViewportView(tbCuotas);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("Cuotas");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel22)
-                    .addComponent(jLabel23)
-                    .addComponent(jLabel24)
-                    .addComponent(jLabel25))
-                .addGap(32, 32, 32)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTotalEntregado)
-                    .addComponent(txtGastos)
-                    .addComponent(txtImporteCuota)
-                    .addComponent(txtMontoTotal))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25)
+                                    .addComponent(jLabel22))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtMontoTotal)
+                                    .addComponent(txtTotalEntregado))
+                                .addGap(66, 66, 66)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel23)
+                                    .addComponent(jLabel24))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtGastos)
+                                    .addComponent(txtImporteCuota)))
+                            .addComponent(jLabel4))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -560,19 +619,19 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel22)
-                    .addComponent(txtMontoTotal))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel23)
-                    .addComponent(txtImporteCuota))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtMontoTotal)
                     .addComponent(jLabel24)
                     .addComponent(txtGastos))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel25)
-                    .addComponent(txtTotalEntregado))
+                    .addComponent(txtTotalEntregado)
+                    .addComponent(jLabel23)
+                    .addComponent(txtImporteCuota))
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -609,9 +668,9 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnImprimirComprobante)
                     .addComponent(btnAceptar)
@@ -658,6 +717,7 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
@@ -665,10 +725,12 @@ public class SolicitarCreditoView extends javax.swing.JInternalFrame implements 
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JRadioButton radioCuotaAdelantada;
     private javax.swing.JRadioButton radioCuotaVencida;
     private javax.swing.ButtonGroup radioGroupModalidad;
+    private javax.swing.JTable tbCuotas;
     private javax.swing.JLabel txtCliente;
     private javax.swing.JLabel txtCreditosActivos;
     private javax.swing.JLabel txtDni;
