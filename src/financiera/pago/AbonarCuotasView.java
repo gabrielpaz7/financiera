@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -63,8 +64,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             @Override
             public void actionPerformed(ActionEvent e) {
                 int dni = Integer.valueOf(fdDni.getText());
-                presenter.buscarCliente(dni);
-                
+                presenter.buscarCliente(dni);               
             }
         });
         
@@ -72,7 +72,8 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             @Override
             public void actionPerformed(ActionEvent e) {
                 double importe = Double.valueOf(fdImporte.getText());
-                presenter.guardarPago(importe);
+                //presenter.guardarPago(importe);
+                seleccionarCuotasAutomatica();
             }
         });
     }
@@ -91,7 +92,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DecimalFormat decimalFormat = new DecimalFormat("00.00");
         
-        String[] tbHeader = {
+        /*String[] tbHeader = {
             "Credito",
             "Cuota",
             "Importe",
@@ -99,12 +100,16 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             "Recargo %",
             "Recargo $",
             "Total",
-            "Estado"
-        };
-        DefaultTableModel tbModel = new DefaultTableModel(tbHeader, 0);
+            "Estado",
+            "Marcar"
+        };*/
+        
+        //Reset table
+        DefaultTableModel tbModel = ((DefaultTableModel)tbCreditos.getModel());
+        tbModel.setNumRows(0);
         
         for(Credito credito : creditos) {
-            Object[] row = new Object[8];
+            Object[] row = new Object[9];
             
             for(Cuota cuota : credito.getCuotas()) {
                row[0] = credito.getNumero();
@@ -115,6 +120,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                row[5] = decimalFormat.format(cuota.calcularImporteRecargo(recargoDiarioPorVencimiento));
                row[6] = decimalFormat.format(cuota.getTotal());
                row[7] = cuota.getEstado();
+               row[8] = false;
                
                tbModel.addRow(row);
             }
@@ -129,7 +135,19 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
     
     public void mostrarMensajeError(int tipo, String titulo, String mensaje) {
         JOptionPane.showMessageDialog(parentFrame, mensaje, titulo, tipo);
-    }    
+    }
+    
+    public void seleccionarCuotasAutomatica() {
+        DefaultTableModel tbModel = (DefaultTableModel) tbCreditos.getModel();
+        
+        for(int i = 0; i < tbModel.getRowCount(); i++) {
+            //Object[] row = new Object[8];
+            for(int j = 0; j < tbModel.getColumnCount(); j++) {
+                System.out.println(tbModel.getValueAt(i, j));
+            }
+            //System.out.println(tbModel.getDataVector().get(i));
+        }
+    }
     
     
     
@@ -159,6 +177,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
         jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         fdImporte = new javax.swing.JTextField();
+        chkSeleccionAutomatica = new javax.swing.JCheckBox();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setClosable(true);
@@ -244,20 +263,42 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
 
         tbCreditos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Credito", "Cuota", "Importe", "Vencimiento", "Recargo %", "Recargo $", "Total", "Estado"
+                "Credito", "Cuota", "Importe", "Vencimiento", "Recargo %", "Recargo $", "Total", "Estado", "Marcar"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tbCreditos);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Pago"));
 
         jLabel5.setText("Importe     $");
+
+        chkSeleccionAutomatica.setText("Pago automático");
+        chkSeleccionAutomatica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkSeleccionAutomaticaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -265,9 +306,12 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fdImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fdImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chkSeleccionAutomatica, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -277,7 +321,9 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(fdImporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chkSeleccionAutomatica)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -288,19 +334,25 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(149, 149, 149)
-                        .addComponent(btnCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAceptar)))
+                        .addGap(274, 274, 274)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(341, 341, 341))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(145, 145, 145)
+                                .addComponent(btnCancelar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -308,28 +360,27 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel30)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAceptar)
+                    .addComponent(btnCancelar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void chkSeleccionAutomaticaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkSeleccionAutomaticaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chkSeleccionAutomaticaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -337,6 +388,7 @@ public class AbonarCuotasView extends javax.swing.JInternalFrame implements View
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JCheckBox chkSeleccionAutomatica;
     private javax.swing.JTextField fdDni;
     private javax.swing.JTextField fdImporte;
     private javax.swing.Box.Filler filler1;
