@@ -127,4 +127,14 @@ public class Cuota {
         return interesCobrado + importe;
     }
     
+    @Override
+    public String toString() {
+       return "\nNumero: " + numero
+            + "\nImporte: " + importe
+            + "\nFecha Vencimiento: " + fechaVencimiento
+            + "\nFecha Pago: " + fechaPago
+            + "\nSaldo Pendiente: " + saldoPendiente
+            + "\nInteres: " + interesCobrado;
+    }
+    
 }

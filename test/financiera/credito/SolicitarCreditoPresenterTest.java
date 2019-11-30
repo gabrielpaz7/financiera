@@ -5,9 +5,16 @@
  */
 package financiera.credito;
 
+import financiera.cliente.Cliente;
 import financiera.common.Model;
 import financiera.common.View;
+import financiera.persistencia.Repositorio;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,11 +28,14 @@ import static org.junit.Assert.*;
  */
 public class SolicitarCreditoPresenterTest {
     
+    public SolicitarCreditoPresenter instance;
+    
     public SolicitarCreditoPresenterTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
+        Repositorio.iniciar();
     }
     
     @AfterClass
@@ -33,89 +43,30 @@ public class SolicitarCreditoPresenterTest {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws ParseException {
+        SolicitarCreditoView view = new SolicitarCreditoView();
+        
+        Credito credito = new Credito(123, 10000, 11500);
+        credito.setUsuario(Repositorio.getUsuarios().get(0));
+        credito.setPlan(Repositorio.getPlanes().get(1));
+        credito.setCliente(Repositorio.getClientes().get(1));
+
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String strFecha = "10/07/2019";
+        Date fechaSolicitud = format.parse(strFecha);
+        credito.setFecha(fechaSolicitud);
+
+        credito.setNumeroCuotas(3);
+        
+        
+        instance = new SolicitarCreditoPresenter();
+        instance.setModel(credito);
+        instance.setView(view);
+        
     }
     
     @After
     public void tearDown() {
-    }
-
-    /**
-     * Test of setView method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testSetView() {
-        System.out.println("setView");
-        View view = null;
-        SolicitarCreditoPresenter instance = null;
-        instance.setView(view);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getView method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testGetView() {
-        System.out.println("getView");
-        SolicitarCreditoPresenter instance = null;
-        SolicitarCreditoView expResult = null;
-        SolicitarCreditoView result = instance.getView();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setModel method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testSetModel() {
-        System.out.println("setModel");
-        Model model = null;
-        SolicitarCreditoPresenter instance = null;
-        instance.setModel(model);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getModel method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testGetModel() {
-        System.out.println("getModel");
-        SolicitarCreditoPresenter instance = null;
-        Credito expResult = null;
-        Credito result = instance.getModel();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of updateView method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testUpdateView() {
-        System.out.println("updateView");
-        SolicitarCreditoPresenter instance = null;
-        instance.updateView();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of updateModel method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testUpdateModel() {
-        System.out.println("updateModel");
-        SolicitarCreditoPresenter instance = null;
-        instance.updateModel();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -124,11 +75,11 @@ public class SolicitarCreditoPresenterTest {
     @Test
     public void testBuscarCliente() {
         System.out.println("buscarCliente");
-        int dni = 0;
-        SolicitarCreditoPresenter instance = null;
+        int dni = 33000000;
         instance.buscarCliente(dni);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Cliente expCliente = Repositorio.getClientes().get(1);
+        
+        assertEquals(expCliente, instance.getModel().getCliente());
     }
 
     /**
@@ -137,36 +88,45 @@ public class SolicitarCreditoPresenterTest {
     @Test
     public void testGuardarCredito() {
         System.out.println("guardarCredito");
-        SolicitarCreditoPresenter instance = null;
         instance.guardarCredito();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of generarCuotas method, of class SolicitarCreditoPresenter.
      */
     @Test
-    public void testGenerarCuotas() {
+    public void testGenerarCuotas() throws ParseException {
         System.out.println("generarCuotas");
-        SolicitarCreditoPresenter instance = null;
-        ArrayList<Cuota> expResult = null;
-        ArrayList<Cuota> result = instance.generarCuotas();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        
+        
+        instance.generarCuotas();
+        ArrayList<Cuota> result = instance.getModel().getCuotas();
+        
+        ArrayList<Cuota> expResult = new ArrayList<>();
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String strFecha = "10/07/2019";
+        Date fechaSolicitud = format.parse(strFecha);
+        
+        Calendar fechaVencimiento = Calendar.getInstance();
+        fechaVencimiento.setTime(fechaSolicitud);
+        
+        System.out.println("Result");
+        for(Cuota cuota : result) {
+            System.out.println(cuota.toString());
+        }
 
-    /**
-     * Test of imprimirComprobanteCredito method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testImprimirComprobanteCredito() {
-        System.out.println("imprimirComprobanteCredito");
-        SolicitarCreditoPresenter instance = null;
-        instance.imprimirComprobanteCredito();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    
+        System.out.println("Expected");
+        for(int i = 1; i <= instance.getModel().getNumeroCuotas(); i++) {
+            fechaVencimiento.setTime(fechaSolicitud);
+            fechaVencimiento.set(Calendar.DAY_OF_MONTH, 10);
+            fechaVencimiento.add(Calendar.MONTH, i);
+            
+            Cuota cuota = new Cuota(i, instance.getModel().calcularImporteCuota(), fechaVencimiento.getTime(), EstadoCuota.PENDIENTE);
+            expResult.add(cuota);
+            
+            System.out.println(cuota.toString());
+        }
+
+        assertArrayEquals(expResult.toArray(), result.toArray());
+    }    
 }

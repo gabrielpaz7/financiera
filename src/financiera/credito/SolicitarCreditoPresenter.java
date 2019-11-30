@@ -37,6 +37,10 @@ public class SolicitarCreditoPresenter implements Presenter {
     SolicitarCreditoView view;
     Credito model;
 
+    public SolicitarCreditoPresenter() {
+    }
+    
+
     public SolicitarCreditoPresenter(SolicitarCreditoView view, Credito model) {
         this.view = view;
         this.model = model;
@@ -158,9 +162,10 @@ public class SolicitarCreditoPresenter implements Presenter {
     public ArrayList<Cuota> generarCuotas() {
         ArrayList<Cuota> cuotas = new ArrayList<Cuota>();
         
+        Calendar fechaVencimiento = Calendar.getInstance();
         
         for(int i = 1; i <= model.getNumeroCuotas(); i++) {
-            Calendar fechaVencimiento = Calendar.getInstance();
+            fechaVencimiento.setTime(model.getFecha());
             fechaVencimiento.set(Calendar.DAY_OF_MONTH, 10);
             fechaVencimiento.add(Calendar.MONTH, i);
             
