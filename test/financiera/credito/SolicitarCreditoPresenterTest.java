@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,15 +84,6 @@ public class SolicitarCreditoPresenterTest {
     }
 
     /**
-     * Test of guardarCredito method, of class SolicitarCreditoPresenter.
-     */
-    @Test
-    public void testGuardarCredito() {
-        System.out.println("guardarCredito");
-        instance.guardarCredito();
-    }
-
-    /**
      * Test of generarCuotas method, of class SolicitarCreditoPresenter.
      */
     @Test
@@ -127,6 +119,18 @@ public class SolicitarCreditoPresenterTest {
             System.out.println(cuota.toString());
         }
 
-        assertArrayEquals(expResult.toArray(), result.toArray());
+        assertEquals(expResult, result);
+        //assertArrayEquals(expResult.toArray(), result.toArray());
+        //Assert.assertEquals(expResult, result);
+        //assertEquals(expResult.toString(), format.toString());
+    }
+    
+    /**
+     * Test of guardarCredito method, of class SolicitarCreditoPresenter.
+     */
+    @Test
+    public void testGuardarCredito() {
+        System.out.println("guardarCredito");
+        instance.guardarCredito();
     }    
 }
